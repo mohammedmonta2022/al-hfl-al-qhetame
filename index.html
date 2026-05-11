@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>فقرة نور البيان</title>
+  <style>
+    :root {
+      --bg: #061016;
+      --bg-2: #0b1b26;
+      --gold: #d9b76f;
+      --gold-2: #fff0b7;
+      --cyan: #9ee8ff;
+      --text: #fff8df;
+      --muted: #d8cab2;
+      --card: rgba(255, 255, 255, 0.08);
+      --card-strong: rgba(255, 255, 255, 0.14);
+      --border: rgba(255, 224, 152, 0.28);
+      --shadow: 0 28px 90px rgba(0, 0, 0, 0.45);
+      font-family: "Amiri", "Aref Ruqaa", "Noto Naskh Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      color: var(--text);
+      background: radial-gradient(circle at 50% 22%, #1b3947 0%, #08141b 42%, #020507 100%);
+    }
+
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      isolation: isolate;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: clamp(28px, 5vw, 76px);
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.015);
+      transition: opacity 700ms ease, transform 900ms ease;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(217, 183, 111, 0.13), transparent 32%),
+        radial-gradient(circle at 78% 80%, rgba(158, 232, 255, 0.10), transparent 30%),
+        linear-gradient(135deg, rgba(2, 8, 12, 0.72), rgba(10, 27, 38, 0.72));
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+      z-index: 2;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 58px 58px;
+      mask-image: radial-gradient(circle at center, black, transparent 72%);
+      z-index: -2;
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: clamp(12px, 2vw, 28px);
+      border: 1px solid rgba(217, 183, 111, 0.22);
+      border-radius: 28px;
+      box-shadow: inset 0 0 42px rgba(217, 183, 111, 0.05);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .content {
+      width: min(1120px, 92vw);
+      text-align: center;
+      display: grid;
+      gap: clamp(18px, 3vh, 36px);
+      justify-items: center;
+    }
+
+    h1, h2, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(3.1rem, 8vw, 8.4rem);
+      line-height: 1.08;
+      color: var(--gold-2);
+      text-shadow: 0 0 22px rgba(217, 183, 111, 0.43), 0 12px 42px rgba(0,0,0,0.55);
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      font-size: clamp(2.3rem, 5.6vw, 5.7rem);
+      line-height: 1.15;
+      color: var(--gold-2);
+      text-shadow: 0 0 18px rgba(217, 183, 111, 0.35);
+    }
+
+    .subtitle, .lead {
+      font-size: clamp(1.35rem, 2.6vw, 2.7rem);
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .lead strong, .gold { color: var(--gold-2); }
+
+    .quran-scene {
+      position: relative;
+      width: min(560px, 78vw);
+      aspect-ratio: 1.7;
+      display: grid;
+      place-items: end center;
+      margin-top: -8px;
+    }
+
+    .quran-scene::before {
+      content: "";
+      position: absolute;
+      width: 78%;
+      height: 92%;
+      bottom: 8%;
+      background: radial-gradient(ellipse at center, rgba(255, 235, 156, 0.62), rgba(217, 183, 111, 0.19) 36%, transparent 68%);
+      filter: blur(14px);
+      animation: glow 4s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { transform: scale(0.96); opacity: 0.72; }
+      50% { transform: scale(1.05); opacity: 1; }
+    }
+
+    .book {
+      position: relative;
+      width: 86%;
+      height: 52%;
+      display: flex;
+      gap: 3%;
+      filter: drop-shadow(0 28px 28px rgba(0,0,0,0.42));
+      z-index: 1;
+    }
+
+    .page {
+      flex: 1;
+      border: 2px solid rgba(217, 183, 111, 0.85);
+      border-radius: 18px 8px 24px 18px;
+      background:
+        repeating-linear-gradient(0deg, rgba(46, 40, 25, 0.0), rgba(46, 40, 25, 0.0) 18px, rgba(105, 85, 38, 0.18) 19px),
+        linear-gradient(135deg, #fff5cf, #c6a563 58%, #7d5e22);
+      opacity: 0.92;
+      transform: skewY(-5deg);
+    }
+
+    .page.left { border-radius: 8px 18px 18px 24px; transform: skewY(5deg); }
+
+    .rays {
+      position: absolute;
+      inset: 0;
+      background: conic-gradient(from 210deg at 50% 80%, transparent 0deg, rgba(255, 230, 150, 0.18) 18deg, transparent 32deg, transparent 64deg, rgba(158, 232, 255, 0.13) 84deg, transparent 106deg, transparent 360deg);
+      mask-image: radial-gradient(ellipse at 50% 52%, black 0 46%, transparent 72%);
+      animation: raySpin 18s linear infinite;
+    }
+
+    @keyframes raySpin { to { transform: rotate(1turn); } }
+
+    .icons, .cards, .mini-grid, .syntax-grid {
+      display: grid;
+      gap: clamp(14px, 2vw, 24px);
+      width: 100%;
+    }
+
+    .icons { grid-template-columns: repeat(3, 1fr); }
+    .cards { grid-template-columns: repeat(3, 1fr); }
+    .mini-grid { grid-template-columns: repeat(2, minmax(190px, 1fr)); }
+    .syntax-grid { grid-template-columns: repeat(5, minmax(130px, 1fr)); }
+
+    .icon-card, .project-card, .skill-card, .syntax-card, .table-card {
+      position: relative;
+      min-height: 150px;
+      display: grid;
+      place-items: center;
+      gap: 10px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background: linear-gradient(145deg, var(--card-strong), rgba(255,255,255,0.035));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .icon-card::before, .project-card::before, .skill-card::before, .syntax-card::before, .table-card::before {
+      content: "";
+      position: absolute;
+      inset: -60% -30% auto;
+      height: 92px;
+      background: linear-gradient(90deg, transparent, rgba(255, 244, 196, 0.18), transparent);
+      transform: rotate(-14deg);
+    }
+
+    .icon {
+      width: 74px;
+      height: 74px;
+      display: grid;
+      place-items: center;
+      border-radius: 22px;
+      color: #10212b;
+      background: radial-gradient(circle at 35% 25%, #fff7ca, var(--gold));
+      box-shadow: 0 0 30px rgba(217, 183, 111, 0.28);
+      font-size: 2.1rem;
+      font-weight: 800;
+    }
+
+    .card-title {
+      font-size: clamp(1.35rem, 2.25vw, 2.25rem);
+      color: var(--gold-2);
+      font-weight: 800;
+    }
+
+    .big-project {
+      min-height: 260px;
+      width: min(820px, 90vw);
+      border-radius: 34px;
+    }
+
+    .child-letters {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: clamp(18px, 4vw, 48px);
+      align-items: center;
+      width: 100%;
+    }
+
+    .child {
+      width: min(310px, 36vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 32%, #f6d8a9 0 19%, transparent 20%),
+        radial-gradient(circle at 42% 30%, #17242c 0 2%, transparent 3%),
+        radial-gradient(circle at 58% 30%, #17242c 0 2%, transparent 3%),
+        radial-gradient(ellipse at 50% 72%, #29475a 0 29%, transparent 30%),
+        linear-gradient(#1b303d, #0a1720);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 55px rgba(158, 232, 255, 0.14), var(--shadow);
+    }
+
+    .letters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      font-size: clamp(2rem, 4vw, 4.4rem);
+      color: var(--gold-2);
+      text-shadow: 0 0 22px rgba(217, 183, 111, 0.34);
+    }
+
+    .bullet-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(210px, 1fr));
+      gap: 16px;
+      width: min(860px, 92vw);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .bullet-list li {
+      padding: 22px 26px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.07);
+      font-size: clamp(1.4rem, 2.4vw, 2.45rem);
+      color: var(--gold-2);
+      box-shadow: 0 14px 36px rgba(0,0,0,0.24);
+    }
+
+    .diagram {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 18px;
+      width: min(900px, 92vw);
+    }
+
+    .diagram .node {
+      padding: 28px;
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top, rgba(217,183,111,0.18), rgba(255,255,255,0.06));
+      font-size: clamp(1.35rem, 2.2vw, 2.25rem);
+      color: var(--gold-2);
+      box-shadow: var(--shadow);
+    }
+
+    .team-name {
+      min-width: min(520px, 84vw);
+      padding: 26px 34px;
+      border: 1px dashed rgba(255, 240, 183, 0.55);
+      border-radius: 24px;
+      color: var(--cyan);
+      font-size: clamp(1.7rem, 3vw, 3.15rem);
+      background: rgba(158,232,255,0.07);
+    }
+
+    .ayah {
+      padding: clamp(28px, 5vw, 58px);
+      border-radius: 34px;
+      border: 1px solid rgba(255, 240, 183, 0.42);
+      background:
+        radial-gradient(circle at center, rgba(217,183,111,0.21), rgba(255,255,255,0.05) 58%, rgba(0,0,0,0.14)),
+        linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      font-size: clamp(2.2rem, 6vw, 6.2rem);
+      line-height: 1.85;
+      color: var(--gold-2);
+      text-shadow: 0 0 28px rgba(217,183,111,0.42);
+      box-shadow: 0 0 80px rgba(217,183,111,0.13), var(--shadow);
+    }
+
+    .quote {
+      font-size: clamp(2.2rem, 5vw, 5.2rem);
+      color: var(--gold-2);
+      padding: 44px;
+      border-radius: 32px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: var(--shadow);
+    }
+
+    .grammar-table {
+      display: grid;
+      grid-template-columns: 0.75fr 1.45fr;
+      width: min(920px, 94vw);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      background: rgba(255,255,255,0.06);
+      text-align: right;
+    }
+
+    .grammar-table div {
+      padding: 18px 24px;
+      border-bottom: 1px solid rgba(255,224,152,0.18);
+      font-size: clamp(1.1rem, 1.9vw, 1.85rem);
+    }
+
+    .grammar-table .head {
+      color: #10212b;
+      background: linear-gradient(135deg, #fff4be, #d9b76f);
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .grammar-table .word {
+      color: var(--gold-2);
+      font-weight: 800;
+      text-align: center;
+    }
+
+
+    .project-title-only {
+      min-height: 330px;
+      width: min(880px, 90vw);
+    }
+
+    .ba-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(82px, 1fr));
+      gap: clamp(10px, 1.5vw, 18px);
+      width: min(920px, 92vw);
+    }
+
+    .ba-cell {
+      display: grid;
+      place-items: center;
+      min-height: clamp(72px, 10vh, 106px);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: radial-gradient(circle at 50% 20%, rgba(255, 240, 183, 0.17), rgba(255,255,255,0.055));
+      color: var(--gold-2);
+      font-size: clamp(2.2rem, 4vw, 4.8rem);
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(217, 183, 111, 0.34);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.22);
+    }
+
+    .poem {
+      display: grid;
+      gap: 12px;
+      width: min(980px, 92vw);
+      padding: clamp(18px, 2.8vw, 34px);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0.035));
+      box-shadow: var(--shadow);
+      color: var(--gold-2);
+      font-size: clamp(1.15rem, 2vw, 2.18rem);
+      line-height: 1.75;
+    }
+
+    .poem .verse {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .poem .sep {
+      color: var(--cyan);
+      opacity: 0.75;
+    }
+
+    .quran-text {
+      width: min(1040px, 92vw);
+      padding: clamp(26px, 5vw, 58px);
+      border-radius: 34px;
+      border: 1px solid rgba(255, 240, 183, 0.42);
+      background:
+        radial-gradient(circle at center, rgba(217,183,111,0.22), rgba(255,255,255,0.05) 58%, rgba(0,0,0,0.16)),
+        linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      font-family: "KFGQPC Uthman Taha Naskh", "Amiri Quran", "Scheherazade New", "Noto Naskh Arabic", "Amiri", serif;
+      color: var(--gold-2);
+      text-shadow: 0 0 28px rgba(217,183,111,0.42);
+      box-shadow: 0 0 80px rgba(217,183,111,0.13), var(--shadow);
+    }
+
+    .basmala {
+      font-size: clamp(3.1rem, 7vw, 7.4rem);
+      line-height: 1.9;
+    }
+
+    .fatiha {
+      font-size: clamp(1.65rem, 3.2vw, 3.55rem);
+      line-height: 2.15;
+    }
+
+    .controls {
+      position: fixed;
+      inset-inline: 0;
+      bottom: 20px;
+      z-index: 5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    button, .counter {
+      pointer-events: auto;
+      border: 1px solid rgba(255, 240, 183, 0.26);
+      color: var(--text);
+      background: rgba(3, 10, 14, 0.62);
+      backdrop-filter: blur(12px);
+      border-radius: 999px;
+      min-width: 46px;
+      height: 46px;
+      padding: 0 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+    }
+
+    button:hover { border-color: rgba(255, 240, 183, 0.62); color: var(--gold-2); }
+    .counter { display: grid; place-items: center; cursor: default; min-width: 86px; }
+
+    .progress {
+      position: fixed;
+      inset-inline-start: 0;
+      bottom: 0;
+      height: 4px;
+      width: 100%;
+      z-index: 6;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--gold), var(--cyan));
+      transition: width 400ms ease;
+    }
+
+    .hint {
+      position: fixed;
+      top: 18px;
+      inset-inline-start: 24px;
+      z-index: 4;
+      color: rgba(255, 248, 223, 0.58);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 800px) {
+      .icons, .cards, .syntax-grid, .diagram, .bullet-list, .ba-grid { grid-template-columns: 1fr; }
+      .child-letters { grid-template-columns: 1fr; justify-items: center; }
+      .child { width: min(250px, 62vw); }
+      .controls { bottom: 14px; }
+      .hint { display: none; }
+      .poem .verse { grid-template-columns: 1fr; gap: 4px; }
+      .poem .sep { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-label="عرض فقرة نور البيان">
+    <section class="slide active">
+      <div class="content">
+        <div class="quran-scene" aria-hidden="true"><div class="rays"></div><div class="book"><div class="page right"></div><div class="page left"></div></div></div>
+        <h1>فقرة نور البيان</h1>
+        <p class="subtitle">القراءة بالقرآن بمنهج نور البيان</p>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>باسم الله… والحمد لله…</h2>
+        <p class="lead">نصحبكم في رحلة مع <strong>نور البيان</strong></p>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>منهج رائد في تعليم القراءة بالقرآن</h2>
+        <div class="icons">
+          <div class="icon-card"><div class="icon">ق</div><div class="card-title">القراءة</div></div>
+          <div class="icon-card"><div class="icon">✦</div><div class="card-title">الكتابة</div></div>
+          <div class="icon-card"><div class="icon">۞</div><div class="card-title">الرسم العثماني</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>مشاريع نور البيان المتميزة</h2>
+        <div class="cards">
+          <div class="project-card"><div class="card-title">وداعًا للتلقين</div></div>
+          <div class="project-card"><div class="card-title">أجود قرآني</div></div>
+          <div class="project-card"><div class="card-title">لغة أهل الجنة</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <div class="project-card big-project project-title-only"><h2>مشروع<br>«وداعًا للتلقين»</h2></div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>ماذا يدرس الطالب؟</h2>
+        <ul class="bullet-list">
+          <li>الحركات</li><li>المدود</li><li>التنوين</li><li>السكون</li><li>اللام الشمسية والقمرية</li><li>الشدة</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>عرض 20 حالة لحرف الباء</h2>
+        <div class="ba-grid" aria-label="حالات حرف الباء العشرين">
+          <div class="ba-cell">بَ</div><div class="ba-cell">بِ</div><div class="ba-cell">بُ</div><div class="ba-cell">بْ</div><div class="ba-cell">بّ</div>
+          <div class="ba-cell">بً</div><div class="ba-cell">بٍ</div><div class="ba-cell">بٌ</div><div class="ba-cell">بَا</div><div class="ba-cell">بِي</div>
+          <div class="ba-cell">بُو</div><div class="ba-cell">بَّ</div><div class="ba-cell">بِّ</div><div class="ba-cell">بُّ</div><div class="ba-cell">بَّا</div>
+          <div class="ba-cell">بِّي</div><div class="ba-cell">بُّو</div><div class="ba-cell">أَبْ</div><div class="ba-cell">إِبْ</div><div class="ba-cell">أُبْ</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <div class="project-card big-project"><h2>مشروع<br>«أجود قرآني»</h2></div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>ماذا ندرس؟</h2>
+        <div class="mini-grid">
+          <div class="skill-card"><div class="icon">ت</div><div class="card-title">أحكام الترتيل</div></div>
+          <div class="skill-card"><div class="icon">ن</div><div class="card-title">تحفة الأطفال<br><span class="subtitle">حفظًا وشرحًا</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>ماذا تشمل التحفة؟</h2>
+        <div class="diagram">
+          <div class="node">أحكام النون الساكنة والتنوين</div>
+          <div class="node">أحكام الميم الساكنة</div>
+          <div class="node">أحكام اللام</div>
+          <div class="node">أحكام المدود</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>مقدمة التحفة</h2>
+        <div class="poem" aria-label="أبيات مقدمة تحفة الأطفال">
+          <div class="verse"><span>يَقُولُ رَاجِي رَحْمَةِ الْغَفُورِ</span><span class="sep">✦</span><span>دَوْمًا سُلَيْمَانُ هُوَ الْجَمْزُورِي</span></div>
+          <div class="verse"><span>الْحَمْدُ لِلَّهِ مُصَلِّيًا عَلَى</span><span class="sep">✦</span><span>مُحَمَّدٍ وَآلِهِ وَمَنْ تَلَا</span></div>
+          <div class="verse"><span>وَبَعْدُ هَذَا النَّظْمُ لِلْمُرِيدِ</span><span class="sep">✦</span><span>فِي النُّونِ وَالتَّنْوِينِ وَالْمُدُودِ</span></div>
+          <div class="verse"><span>سَمَّيْتُهُ بِتُحْفَةِ الْأَطْفَالِ</span><span class="sep">✦</span><span>عَنْ شَيْخِنَا الْمَيْهِيِّ ذِي الْكَمَالِ</span></div>
+          <div class="verse"><span>أَرْجُو بِهِ أَنْ يَنْفَعَ الطُّلَّابَا</span><span class="sep">✦</span><span>وَالْأَجْرَ وَالْقَبُولَ وَالثَّوَابَا</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <div class="quran-text basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <div class="quran-text fatiha">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۝ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ۝ الرَّحْمَٰنِ الرَّحِيمِ ۝ مَالِكِ يَوْمِ الدِّينِ ۝ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ۝ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ۝ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <div class="project-card big-project"><h2>مشروع<br>«لغة أهل الجنة»</h2></div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>ماذا ندرس؟</h2>
+        <div class="syntax-grid">
+          <div class="syntax-card"><div class="icon">ك</div><div class="card-title">أقسام الكلمة</div></div>
+          <div class="syntax-card"><div class="icon">٢</div><div class="card-title">المفرد والمثنى</div></div>
+          <div class="syntax-card"><div class="icon">ج</div><div class="card-title">الجموع</div></div>
+          <div class="syntax-card"><div class="icon">ف</div><div class="card-title">الأفعال</div></div>
+          <div class="syntax-card"><div class="icon">إ</div><div class="card-title">الجملة الاسمية والفعلية</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <div class="ayah">﴿قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ﴾</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>التهجي</h2>
+        <p class="lead">التهجي وصلاً ووقفًا مع <span class="gold">أحكام القلقلة</span></p>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <div class="quote">«وأظهرن لام فعل...»</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>الإعراب</h2>
+        <div class="grammar-table" role="table" aria-label="إعراب الآية المختارة">
+          <div class="head">الكلمة</div><div class="head">الإعراب</div>
+          <div class="word">قُلْ</div><div>فعل أمر مبني على السكون</div>
+          <div class="word">أَعُوذُ</div><div>فعل مضارع مرفوع بالضمة</div>
+          <div class="word">الباء</div><div>حرف جر</div>
+          <div class="word">رَبِّ</div><div>اسم مجرور وعلامة جره الكسرة</div>
+          <div class="word">الْفَلَقِ</div><div>مضاف إليه مجرور</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h2>خاتمة التحفة</h2>
+        <div class="poem" aria-label="أبيات خاتمة تحفة الأطفال">
+          <div class="verse"><span>وَتَمَّ ذَا النَّظْمُ بِحَمْدِ اللَّهِ</span><span class="sep">✦</span><span>عَلَى تَمَامِهِ بِلَا تَنَاهِي</span></div>
+          <div class="verse"><span>أَبْيَاتُهُ نَدٌّ بَدَا لِذِي النُّهَى</span><span class="sep">✦</span><span>تَارِيخُهَا بُشْرَى لِمَنْ يُتْقِنُهَا</span></div>
+          <div class="verse"><span>ثُمَّ الصَّلَاةُ وَالسَّلَامُ أَبَدَا</span><span class="sep">✦</span><span>عَلَى خِتَامِ الْأَنْبِيَاءِ أَحْمَدَا</span></div>
+          <div class="verse"><span>وَالْآلِ وَالصَّحْبِ وَكُلِّ تَابِعِ</span><span class="sep">✦</span><span>وَكُلِّ قَارِئٍ وَكُلِّ سَامِعِ</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <div class="quran-scene" aria-hidden="true"><div class="rays"></div><div class="book"><div class="page right"></div><div class="page left"></div></div></div>
+        <h2>نور البيان… نور في القراءة…<br>نور في الفهم… نور في الإعراب</h2>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="content">
+        <h1>شكرًا لكم</h1>
+        <p class="subtitle">والسلام عليكم ورحمة الله وبركاته</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="hint">استخدم الأسهم أو المسافة للتنقل — F للملء الكامل</div>
+  <nav class="controls" aria-label="أدوات التحكم في العرض">
+    <button type="button" id="next" aria-label="الشريحة التالية">التالي</button>
+    <div class="counter" id="counter">1 / 22</div>
+    <button type="button" id="prev" aria-label="الشريحة السابقة">السابق</button>
+  </nav>
+  <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const counter = document.getElementById('counter');
+    const bar = document.getElementById('bar');
+    let current = 0;
+
+    function showSlide(index) {
+      current = Math.max(0, Math.min(slides.length - 1, index));
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+      counter.textContent = `${current + 1} / ${slides.length}`;
+      bar.style.width = `${((current + 1) / slides.length) * 100}%`;
+    }
+
+    function nextSlide() { showSlide(current + 1); }
+    function prevSlide() { showSlide(current - 1); }
+
+    document.getElementById('next').addEventListener('click', nextSlide);
+    document.getElementById('prev').addEventListener('click', prevSlide);
+
+    document.addEventListener('keydown', (event) => {
+      const forwardKeys = ['ArrowLeft', 'ArrowDown', 'PageDown', ' ', 'Enter'];
+      const backwardKeys = ['ArrowRight', 'ArrowUp', 'PageUp', 'Backspace'];
+
+      if (forwardKeys.includes(event.key)) {
+        event.preventDefault();
+        nextSlide();
+      }
+
+      if (backwardKeys.includes(event.key)) {
+        event.preventDefault();
+        prevSlide();
+      }
+
+      if (event.key.toLowerCase() === 'f') {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+      }
+    });
+
+    showSlide(0);
+  </script>
+</body>
+</html>
